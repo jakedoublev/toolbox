@@ -22,39 +22,27 @@ export function Toolbox() {
             let current: any = input;
             let currentType = inputType;
 
+            // Parse the input based on its type
             if (currentType === "json") current = JSON.parse(current);
             if (currentType === "yaml") current = yaml.load(current);
             if (currentType === "base64") current = atob(current);
 
-            // Apply transformations
+            // Apply each transformation step
             for (const step of steps) {
                 const t = transformations[step.transformation];
-                current = t.fn(current); // Apply each transformation
-                currentType = t.outputType; // Update output type for next step
+                current = t.fn(current); // Apply transformation
+                currentType = t.outputType; // Update the output type for next transformation
             }
 
-            // If the last transformation was pretty-print, ensure the output is properly formatted
+            // If the last transformation was pretty-print or minify, ensure the output is formatted
             let finalOutput = current;
             if (typeof current === "object" && current !== null) {
-                finalOutput = JSON.stringify(current, null, 2); // Pretty-printing if it's an object
-            }
-            // Check if the last transformation was pretty-print or minify and adjust rendering style accordingly
-            const lastTransformation = steps[steps.length - 1]?.transformation;
-
-            if (lastTransformation) {
-                if (lastTransformation === "prettyPrint") {
-                    // Apply pretty-print formatting if the last step was pretty-print
-                    finalOutput = JSON.stringify(current, null, 2);
-                } else if (lastTransformation === "minify") {
-                    // Apply minification if the last step was minify
-                    finalOutput = JSON.stringify(current);
-                }
+                finalOutput = JSON.stringify(current, null, 2); // Pretty-print for objects
             }
 
-            // Set the final output (ensure the correct style is applied)
-            setOutput(finalOutput);
+            setOutput(finalOutput); // Set the output for the UI
         } catch (e: any) {
-            setOutput(`Error: ${e.message}`);
+            setOutput(`Error: ${e.message}`); // Handle errors gracefully
         }
     }, [input, inputType, steps]);
 
