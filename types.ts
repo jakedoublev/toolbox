@@ -14,11 +14,3 @@ export interface TransformationDefinition {
     to: ValueType;
     apply: (input: any) => any;
 }
-
-export interface PipelineStep {
-    id: string;
-    transformation: TransformationKey | null;
-    inputType: ValueType;
-    outputType: ValueType;
-    output: string;
-}
