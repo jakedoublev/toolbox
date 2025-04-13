@@ -19,21 +19,23 @@ const TransformationList: React.FC<TransformationListProps> = ({
     <div style={{ marginTop: "16px" }}>
         <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>Transformation Steps</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>
-            {steps.map((step) => (
+            {steps.map((step, i) => (
                 <li key={step.id} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
                     <span style={{ flexGrow: 1 }}>{transformations[step.transformation].label}</span>
-                    <button
-                        onClick={() => removeStep(step.id)}
-                        style={{
-                            padding: "4px 8px",
-                            backgroundColor: "#e74c3c",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "4px",
-                        }}
-                    >
-                        Remove
-                    </button>
+                    {i === steps.length - 1 && (
+                        <button
+                            onClick={() => removeStep(step.id)}
+                            style={{
+                                padding: "4px 8px",
+                                backgroundColor: "#e74c3c",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                            }}
+                        >
+                            Remove
+                        </button>
+                    )}
                 </li>
             ))}
         </ul>

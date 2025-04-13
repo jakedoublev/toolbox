@@ -22,44 +22,33 @@ export function Toolbox() {
             let current: any = input;
             let currentType = inputType;
 
-            // Initial parse based on input type
             if (currentType === "json") current = JSON.parse(current);
             if (currentType === "yaml") current = yaml.load(current);
             if (currentType === "base64") current = atob(current);
 
-            // Apply transformations step by step
+            // Apply transformations
             for (const step of steps) {
                 const t = transformations[step.transformation];
+                current = t.fn(current); // Apply each transformation
+                currentType = t.outputType; // Update output type for next step
+            }
 
-                // Ensure transformation is valid for current type
-                if (!t.inputTypes.includes(currentType)) throw new Error("Invalid transformation chain");
+            // Check if the last transformation was pretty-print or minify and adjust rendering style accordingly
+            let finalOutput = current;
+            const lastTransformation = steps[steps.length - 1]?.transformation;
 
-                // Apply the transformation
-                current = t.fn(current);
-
-                // After applying the transformation, detect type if necessary
-                if (typeof current === "string") {
-                    // If it's a string, detect if it's JSON or YAML after decoding base64
-                    currentType = detectType(current);
-                } else {
-                    // Otherwise assume it's JSON if it's an object
-                    currentType = "json";
-                }
-
-                // Special case for minify/pretty-print
-                if (currentType === "json" && (step.transformation === "minify" || step.transformation === "prettyPrint")) {
-                    // If the value is not valid JSON, reset type to string to prevent further formatting operations
-                    try {
-                        current = JSON.parse(current); // Attempt parsing to ensure it's valid
-                        currentType = "json"; // Reset to JSON if valid
-                    } catch {
-                        currentType = "text"; // If it's not valid JSON, treat it as plain text
-                    }
+            if (lastTransformation) {
+                if (lastTransformation === "prettyPrint") {
+                    // Apply pretty-print formatting if the last step was pretty-print
+                    finalOutput = JSON.stringify(current, null, 2);
+                } else if (lastTransformation === "minify") {
+                    // Apply minification if the last step was minify
+                    finalOutput = JSON.stringify(current);
                 }
             }
 
-            // Set the output after transformations
-            setOutput(typeof current === "string" ? current : JSON.stringify(current, null, 2));
+            // Set the final output (ensure the correct style is applied)
+            setOutput(finalOutput);
         } catch (e: any) {
             setOutput(`Error: ${e.message}`);
         }
@@ -70,7 +59,10 @@ export function Toolbox() {
     };
 
     const removeStep = (id: string) => {
-        setSteps(steps.filter((step) => step.id !== id));
+        // Only remove the last step in the array
+        if (steps.length > 0 && steps[steps.length - 1].id === id) {
+            setSteps(steps.slice(0, steps.length - 1)); // Remove the last step
+        }
     };
 
     const getValidTransformations = (type: DataType) => {
