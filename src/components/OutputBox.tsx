@@ -1,25 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 
-interface OutputBoxProps {
+type OutputBoxProps = {
     output: string;
+};
+
+export default function OutputBox({ output }: OutputBoxProps) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(output);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
+    };
+
+    return (
+        <div style={{ marginTop: "16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h3>Output</h3>
+                <button onClick={handleCopy} style={{ padding: "4px 8px", fontSize: "0.9rem" }}>
+                    {copied ? "Copied!" : "Copy"}
+                </button>
+            </div>
+            <textarea
+                readOnly
+                value={output}
+                style={{ width: "100%", height: "200px", fontFamily: "monospace", marginTop: "8px" }}
+            />
+        </div>
+    );
 }
-
-const OutputBox: React.FC<OutputBoxProps> = ({ output }) => (
-    <div style={{ marginTop: "16px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>Output</h2>
-        <textarea
-            style={{
-                width: "100%",
-                padding: "8px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                backgroundColor: "#f7f7f7",
-            }}
-            rows={6}
-            readOnly
-            value={output}
-        />
-    </div>
-);
-
-export default OutputBox;

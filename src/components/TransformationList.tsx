@@ -7,17 +7,20 @@ interface TransformationListProps {
     addStep: (transformation: keyof typeof transformations) => void;
     getValidTransformations: (type: DataType) => { key: string; label: string }[];
     currentType: DataType;
+    clearSteps: () => void;
 }
 
 const TransformationList: React.FC<TransformationListProps> = ({
     steps,
     removeStep,
     addStep,
+    clearSteps,
     getValidTransformations,
     currentType,
 }) => (
     <div style={{ marginTop: "16px" }}>
         <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>Transformation Steps</h2>
+        {steps.length > 0 && <button onClick={clearSteps}>Clear All Steps</button>}
         <ul style={{ listStyle: "none", padding: 0 }}>
             {steps.map((step, i) => (
                 <li key={step.id} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>

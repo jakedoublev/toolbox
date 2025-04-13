@@ -63,6 +63,8 @@ export function Toolbox() {
             .map(([key, t]) => ({ key, label: t.label }));
     };
 
+    const clearSteps = () => setSteps([]);
+
     let lastType = inputType;
     try {
         let cur: any = input;
@@ -89,6 +91,7 @@ export function Toolbox() {
                 steps={steps}
                 removeStep={removeStep}
                 addStep={addStep}
+                clearSteps={clearSteps}
                 getValidTransformations={getValidTransformations}
                 currentType={lastType}
             />
