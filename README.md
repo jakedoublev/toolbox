@@ -7,6 +7,7 @@ Transform input between JSON, YAML, and base64 to your heart's content.
 ## Roadmap
 
 -   JWT support
+-   XML support
 -   download output to file
 -   save pipeline steps
 -   export node executable for entire pipeline transformation (?)
