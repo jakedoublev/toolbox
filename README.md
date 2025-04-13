@@ -1,5 +1,7 @@
 # Transformation Toolbox
 
+<img src="./assets/toolbox_screenshot.png"/>
+
 ## Roadmap
 
 -   JWT support
