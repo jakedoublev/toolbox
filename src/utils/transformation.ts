@@ -40,23 +40,25 @@ export const transformations: {
     convertToYAML: {
         label: "Convert to YAML",
         fn: (input: any) => {
-            try {
-                return yaml.dump(input);
-            } catch (e) {
-                throw new Error("Error converting to YAML.");
+            // Ensure the input is a proper JavaScript object (not a stringified JSON)
+            if (typeof input === "string") {
+                input = JSON.parse(input); // Parse if the input is a JSON string
             }
+            // Return a valid YAML representation (not a stringified YAML)
+            return yaml.dump(input); // Returns a YAML-formatted string
         },
         inputTypes: ["json"],
         outputType: "yaml",
     },
+
     convertToJSON: {
         label: "Convert to JSON",
         fn: (input: any) => {
-            try {
-                return JSON.stringify(yaml.load(input), null, 2);
-            } catch (e) {
-                throw new Error("Error converting to JSON from YAML.");
+            // Ensure the input is valid YAML before converting to JSON
+            if (typeof input === "string") {
+                input = yaml.load(input); // Parse YAML string to a JavaScript object
             }
+            return JSON.stringify(input, null, 2); // Convert to JSON
         },
         inputTypes: ["yaml"],
         outputType: "json",

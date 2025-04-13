@@ -33,8 +33,12 @@ export function Toolbox() {
                 currentType = t.outputType; // Update output type for next step
             }
 
-            // Check if the last transformation was pretty-print or minify and adjust rendering style accordingly
+            // If the last transformation was pretty-print, ensure the output is properly formatted
             let finalOutput = current;
+            if (typeof current === "object" && current !== null) {
+                finalOutput = JSON.stringify(current, null, 2); // Pretty-printing if it's an object
+            }
+            // Check if the last transformation was pretty-print or minify and adjust rendering style accordingly
             const lastTransformation = steps[steps.length - 1]?.transformation;
 
             if (lastTransformation) {
