@@ -116,7 +116,7 @@ export const detectType = (input: string): "json" | "yaml" | "base64" | "text" =
     if (isBase64) {
         try {
             // Try decoding base64
-            const decoded = atob(input);
+            atob(input);
             // Don't try to decode as JSON or YAML unless the decoded content is valid
             return "base64";
         } catch {
