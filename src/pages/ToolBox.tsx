@@ -85,7 +85,7 @@ export function Toolbox() {
     } catch {}
 
     return (
-        <div style={{ padding: "16px" }}>
+        <div style={{ padding: "16px", width: "100%" }}>
             <InputBox input={input} inputType={inputType} onChange={setInput} />
             <TransformationList
                 steps={steps}
