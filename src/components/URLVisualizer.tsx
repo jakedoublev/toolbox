@@ -190,7 +190,7 @@ const URLVisualizer = () => {
                     onChange={(e) => setUrlInput(e.target.value)}
                     style={styles.input}
                 />
-                <CopyButton content={urlInput} />
+                {urlInput !== "" && <CopyButton content={urlInput} />}
             </div>
 
             {urlObject && (
