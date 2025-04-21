@@ -1,6 +1,7 @@
 import { useState, CSSProperties } from "react";
 import { v4 as uuidv4, v6 as uuidv6 } from "uuid";
 import { Switch } from "@headlessui/react";
+import { CopyButton } from "./CopyButton";
 
 const styles: Record<string, CSSProperties> = {
     container: {
@@ -53,7 +54,6 @@ const styles: Record<string, CSSProperties> = {
 export const UUIDGenerator = () => {
     const [uuid, setUuid] = useState(uuidv4());
     const [version, setVersion] = useState("v4");
-    const [copied, setCopied] = useState(false);
 
     const generateUUID = () => {
         if (version === "v4") {
@@ -61,19 +61,18 @@ export const UUIDGenerator = () => {
         } else if (version === "v6") {
             setUuid(uuidv6());
         }
-        setCopied(false);
     };
 
-    const copyToClipboard = async () => {
-        try {
-            await navigator.clipboard.writeText(uuid);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error("Failed to copy: ", err);
-            alert("Failed to copy UUID to clipboard.");
-        }
-    };
+    // const copyToClipboard = async () => {
+    //     try {
+    //         await navigator.clipboard.writeText(uuid);
+    //         setCopied(true);
+    //         setTimeout(() => setCopied(false), 2000);
+    //     } catch (err) {
+    //         console.error("Failed to copy: ", err);
+    //         alert("Failed to copy UUID to clipboard.");
+    //     }
+    // };
 
     const toggleVersion = () => {
         const newVersion = version === "v4" ? "v6" : "v4";
@@ -94,15 +93,7 @@ export const UUIDGenerator = () => {
                 <button onClick={generateUUID} style={styles.button}>
                     Generate
                 </button>
-                <button
-                    onClick={copyToClipboard}
-                    style={{
-                        ...styles.button,
-                        backgroundColor: "green",
-                    }}
-                >
-                    {copied ? "Copied!" : "Copy"}
-                </button>
+                <CopyButton content={uuid} />
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginTop: "8px" }}>
