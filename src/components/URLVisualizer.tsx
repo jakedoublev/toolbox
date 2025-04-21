@@ -1,4 +1,5 @@
-import React, { useState, useEffect, CSSProperties } from "react";
+import { useState, useEffect, CSSProperties } from "react";
+import { CopyButton } from "./CopyButton";
 
 const parseParams = (paramString: string): Record<string, string> => {
     const params = new URLSearchParams(paramString);
@@ -12,7 +13,9 @@ const parseParams = (paramString: string): Record<string, string> => {
 const stringifyParams = (params: Record<string, string>): string => {
     const urlParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-        urlParams.set(key, encodeURIComponent(value));
+        if (key.trim() !== "") {
+            urlParams.set(key, encodeURIComponent(value));
+        }
     });
     return urlParams.toString();
 };
@@ -74,11 +77,85 @@ const styles: Record<string, CSSProperties> = {
     },
 };
 
-const URLVisualizer: React.FC = () => {
+interface ParamsEditorProps {
+    type: "query" | "hash";
+    params: Record<string, string>;
+    onChange: (key: string, value: string) => void;
+    onRemove: (key: string) => void;
+    onAdd: (key: string, value: string) => void;
+    newKey: string;
+    newValue: string;
+    setNewKey: (val: string) => void;
+    setNewValue: (val: string) => void;
+}
+
+const ParamsEditor = ({
+    type,
+    params,
+    onChange,
+    onRemove,
+    onAdd,
+    newKey,
+    newValue,
+    setNewKey,
+    setNewValue,
+}: ParamsEditorProps) => (
+    <div style={styles.section}>
+        <strong>{type === "query" ? "Query" : "Hash"} Parameters:</strong>
+        {Object.keys(params).length === 0 ? (
+            <div style={styles.empty}>None</div>
+        ) : (
+            Object.entries(params).map(([key, value]) => (
+                <div key={key} style={styles.paramItem}>
+                    <label style={styles.label}>{key}</label>
+                    <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => onChange(key, e.target.value)}
+                        style={styles.paramInput}
+                    />
+                    <button
+                        onClick={() => onRemove(key)}
+                        style={{ ...styles.button, backgroundColor: "#eb3f59", marginLeft: "8px" }}
+                    >
+                        –
+                    </button>
+                </div>
+            ))
+        )}
+        <div style={styles.paramItem}>
+            <input placeholder="key" value={newKey} onChange={(e) => setNewKey(e.target.value)} style={styles.paramInput} />
+            <input
+                placeholder="value"
+                value={newValue}
+                onChange={(e) => setNewValue(e.target.value)}
+                style={{ ...styles.paramInput, marginLeft: "8px" }}
+            />
+            <button
+                onClick={() => {
+                    if (newKey.trim()) {
+                        onAdd(newKey, newValue);
+                        setNewKey("");
+                        setNewValue("");
+                    }
+                }}
+                style={{ ...styles.button, marginLeft: "8px" }}
+            >
+                +
+            </button>
+        </div>
+    </div>
+);
+
+const URLVisualizer = () => {
     const [urlInput, setUrlInput] = useState<string>("");
     const [urlObject, setUrlObject] = useState<URL | null>(null);
     const [queryParams, setQueryParams] = useState<Record<string, string>>({});
     const [hashParams, setHashParams] = useState<Record<string, string>>({});
+    const [newQueryKey, setNewQueryKey] = useState("");
+    const [newQueryValue, setNewQueryValue] = useState("");
+    const [newHashKey, setNewHashKey] = useState("");
+    const [newHashValue, setNewHashValue] = useState("");
 
     useEffect(() => {
         try {
@@ -93,27 +170,13 @@ const URLVisualizer: React.FC = () => {
         }
     }, [urlInput]);
 
-    const handleParamChange = (type: "query" | "hash", key: string, value: string) => {
-        const newParams = {
-            ...(type === "query" ? queryParams : hashParams),
-            [key]: value,
-        };
-        if (type === "query") {
-            setQueryParams(newParams);
-        } else {
-            setHashParams(newParams);
-        }
-
+    const updateUrlInput = (updatedQueryParams: Record<string, string>, updatedHashParams: Record<string, string>) => {
         if (urlObject) {
             const updatedUrl = new URL(urlObject.toString());
-            updatedUrl.search = stringifyParams(type === "query" ? newParams : queryParams);
-            updatedUrl.hash = stringifyParams(type === "hash" ? newParams : hashParams);
+            updatedUrl.search = stringifyParams(updatedQueryParams);
+            updatedUrl.hash = stringifyParams(updatedHashParams);
             setUrlInput(updatedUrl.toString());
         }
-    };
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(urlInput);
     };
 
     return (
@@ -127,9 +190,7 @@ const URLVisualizer: React.FC = () => {
                     onChange={(e) => setUrlInput(e.target.value)}
                     style={styles.input}
                 />
-                <button onClick={copyToClipboard} style={styles.button}>
-                    Copy URL
-                </button>
+                <CopyButton content={urlInput} />
             </div>
 
             {urlObject && (
@@ -144,43 +205,55 @@ const URLVisualizer: React.FC = () => {
                         <strong>Path:</strong> {urlObject.pathname}
                     </div>
 
-                    <div style={styles.section}>
-                        <strong>Query Parameters:</strong>
-                        {Object.keys(queryParams).length === 0 ? (
-                            <div style={styles.empty}>None</div>
-                        ) : (
-                            Object.entries(queryParams).map(([key, value]) => (
-                                <div key={key} style={styles.paramItem}>
-                                    <label style={styles.label}>{key}</label>
-                                    <input
-                                        type="text"
-                                        value={value}
-                                        onChange={(e) => handleParamChange("query", key, e.target.value)}
-                                        style={styles.paramInput}
-                                    />
-                                </div>
-                            ))
-                        )}
-                    </div>
+                    <ParamsEditor
+                        type="query"
+                        params={queryParams}
+                        onChange={(key, value) => {
+                            const updated = { ...queryParams, [key]: value };
+                            setQueryParams(updated);
+                            updateUrlInput(updated, hashParams);
+                        }}
+                        onRemove={(key) => {
+                            const updated = { ...queryParams };
+                            delete updated[key];
+                            setQueryParams(updated);
+                            updateUrlInput(updated, hashParams);
+                        }}
+                        onAdd={(key, value) => {
+                            const updated = { ...queryParams, [key]: value };
+                            setQueryParams(updated);
+                            updateUrlInput(updated, hashParams);
+                        }}
+                        newKey={newQueryKey}
+                        newValue={newQueryValue}
+                        setNewKey={setNewQueryKey}
+                        setNewValue={setNewQueryValue}
+                    />
 
-                    <div style={styles.section}>
-                        <strong>Hash Parameters:</strong>
-                        {Object.keys(hashParams).length === 0 ? (
-                            <div style={styles.empty}>None</div>
-                        ) : (
-                            Object.entries(hashParams).map(([key, value]) => (
-                                <div key={key} style={styles.paramItem}>
-                                    <label style={styles.label}>{key}</label>
-                                    <input
-                                        type="text"
-                                        value={value}
-                                        onChange={(e) => handleParamChange("hash", key, e.target.value)}
-                                        style={styles.paramInput}
-                                    />
-                                </div>
-                            ))
-                        )}
-                    </div>
+                    <ParamsEditor
+                        type="hash"
+                        params={hashParams}
+                        onChange={(key, value) => {
+                            const updated = { ...hashParams, [key]: value };
+                            setHashParams(updated);
+                            updateUrlInput(queryParams, updated);
+                        }}
+                        onRemove={(key) => {
+                            const updated = { ...hashParams };
+                            delete updated[key];
+                            setHashParams(updated);
+                            updateUrlInput(queryParams, updated);
+                        }}
+                        onAdd={(key, value) => {
+                            const updated = { ...hashParams, [key]: value };
+                            setHashParams(updated);
+                            updateUrlInput(queryParams, updated);
+                        }}
+                        newKey={newHashKey}
+                        newValue={newHashValue}
+                        setNewKey={setNewHashKey}
+                        setNewValue={setNewHashValue}
+                    />
                 </div>
             )}
         </div>
