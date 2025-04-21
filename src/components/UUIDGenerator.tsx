@@ -1,8 +1,56 @@
-import { useState } from "react";
+import { useState, CSSProperties } from "react";
 import { v4 as uuidv4, v6 as uuidv6 } from "uuid";
 import { Switch } from "@headlessui/react";
 
-const UUIDGenerator = () => {
+const styles: Record<string, CSSProperties> = {
+    container: {
+        maxWidth: "600px",
+        margin: "2rem auto",
+        padding: "1rem",
+        border: "1px solid #ccc",
+        borderRadius: "6px",
+        fontFamily: "sans-serif",
+    },
+    inputGroup: {
+        marginBottom: "1rem",
+    },
+    input: {
+        width: "95%",
+        padding: "0.5rem",
+        marginTop: "0.25rem",
+        marginBottom: "0.5rem",
+        border: "1px solid #aaa",
+        borderRadius: "4px",
+    },
+    button: {
+        padding: "0.5rem 1rem",
+        fontWeight: "bold",
+        backgroundColor: "#007bff",
+        color: "white",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
+    buttonHover: {
+        backgroundColor: "#0056b3",
+    },
+    label: {
+        width: "100px",
+        fontFamily: "monospace",
+        fontWeight: "bold",
+    },
+    pre: {
+        padding: "8px",
+        backgroundColor: "#edf2f7",
+        borderRadius: "4px",
+        fontSize: "12px",
+        fontFamily: "monospace",
+        wordBreak: "break-all",
+        color: "#4a5568",
+    },
+};
+
+export const UUIDGenerator = () => {
     const [uuid, setUuid] = useState(uuidv4());
     const [version, setVersion] = useState("v4");
     const [copied, setCopied] = useState(false);
@@ -34,49 +82,23 @@ const UUIDGenerator = () => {
     };
 
     return (
-        <div style={{ marginTop: "16px" }}>
-            <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>UUID Generator</h2>
-            <div style={{ marginTop: "8px" }}>
-                <p style={{ fontSize: "14px", color: "#718096" }}>Generated UUID ({version}):</p>
-                <pre
-                    style={{
-                        padding: "8px",
-                        backgroundColor: "#edf2f7",
-                        borderRadius: "4px",
-                        fontSize: "12px",
-                        fontFamily: "monospace",
-                        wordBreak: "break-all",
-                        color: "#4a5568",
-                    }}
-                >
+        <div style={styles.container}>
+            <div style={styles.inputGroup}>
+                <label htmlFor="generated-uuid">UUID Generator ({version})</label>
+                <pre style={styles.pre} id="generated-uuid">
                     {uuid}
                 </pre>
             </div>
 
             <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                <button
-                    onClick={generateUUID}
-                    style={{
-                        padding: "4px 8px",
-                        backgroundColor: "#3182ce",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "4px",
-                    }}
-                >
+                <button onClick={generateUUID} style={styles.button}>
                     Generate
                 </button>
                 <button
                     onClick={copyToClipboard}
                     style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        backgroundColor: copied ? "#48bb78" : "#38a169",
-                        color: "#fff",
-                        border: "none",
+                        ...styles.button,
+                        backgroundColor: "green",
                     }}
                 >
                     {copied ? "Copied!" : "Copy"}
@@ -104,9 +126,9 @@ const UUIDGenerator = () => {
                         className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out"
                         style={{
                             display: "inline-block",
-                            height: "16px",
-                            width: "16px",
-                            transform: version === "v6" ? "translateX(20px)" : "translateX(4px)",
+                            height: "18px",
+                            width: "18px",
+                            transform: version === "v6" ? "translateX(16px)" : "translateX(-5px)",
                             borderRadius: "100px",
                             backgroundColor: "#fff",
                             boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
@@ -118,5 +140,3 @@ const UUIDGenerator = () => {
         </div>
     );
 };
-
-export default UUIDGenerator;

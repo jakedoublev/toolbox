@@ -10,7 +10,7 @@ interface TransformationListProps {
     clearSteps: () => void;
 }
 
-const TransformationList: React.FC<TransformationListProps> = ({
+export const TransformationList: React.FC<TransformationListProps> = ({
     steps,
     removeStep,
     addStep,
@@ -57,5 +57,3 @@ const TransformationList: React.FC<TransformationListProps> = ({
         </div>
     </div>
 );
-
-export default TransformationList;

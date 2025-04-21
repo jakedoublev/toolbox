@@ -4,7 +4,7 @@ type OutputBoxProps = {
     output: string;
 };
 
-export default function OutputBox({ output }: OutputBoxProps) {
+export function OutputBox({ output }: OutputBoxProps) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {

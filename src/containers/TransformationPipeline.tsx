@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import yaml from "js-yaml";
-import InputBox from "../components/InputBox";
-import TransformationList from "../components/TransformationList";
-import OutputBox from "../components/OutputBox";
+
+import { InputBox } from "../components/InputBox";
+import { TransformationList } from "../components/TransformationList";
+import { OutputBox } from "../components/OutputBox";
 import { detectType, transformations, Step, DataType } from "../utils/transformation";
 
-export function Toolbox() {
+export function TransformationPipeline() {
     const [input, setInput] = useState("");
     const [inputType, setInputType] = useState<"json" | "yaml" | "base64" | "text">("text");
     const [steps, setSteps] = useState<Step[]>([]);

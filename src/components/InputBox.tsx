@@ -6,7 +6,7 @@ interface InputBoxProps {
     onChange: (value: string) => void;
 }
 
-const InputBox: React.FC<InputBoxProps> = ({ input, inputType, onChange }) => (
+export const InputBox: React.FC<InputBoxProps> = ({ input, inputType, onChange }) => (
     <div>
         <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>Input ({inputType})</h2>
         <textarea
@@ -17,5 +17,3 @@ const InputBox: React.FC<InputBoxProps> = ({ input, inputType, onChange }) => (
         />
     </div>
 );
-
-export default InputBox;
