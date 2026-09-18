@@ -6,16 +6,12 @@ type OutputBoxProps = {
 
 export function OutputBox({ output }: OutputBoxProps) {
     return (
-        <div style={{ marginTop: "16px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginTop: "1rem" }}>
+            <div className="output-header">
                 <h3>Output</h3>
                 <CopyButton content={output} />
             </div>
-            <textarea
-                readOnly
-                value={output}
-                style={{ width: "100%", height: "200px", fontFamily: "monospace", marginTop: "8px" }}
-            />
+            <textarea readOnly value={output} rows={8} />
         </div>
     );
 }

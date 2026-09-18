@@ -23,27 +23,24 @@ export function TransformationPipeline() {
             let current: any = input;
             let currentType = inputType;
 
-            // Parse the input based on its type
             if (currentType === "json") current = JSON.parse(current);
             if (currentType === "yaml") current = yaml.load(current);
             if (currentType === "base64") current = atob(current);
 
-            // Apply each transformation step
             for (const step of steps) {
                 const t = transformations[step.transformation];
-                current = t.fn(current); // Apply transformation
-                currentType = t.outputType; // Update the output type for next transformation
+                current = t.fn(current);
+                currentType = t.outputType;
             }
 
-            // If the last transformation was pretty-print or minify, ensure the output is formatted
             let finalOutput = current;
             if (typeof current === "object" && current !== null) {
-                finalOutput = JSON.stringify(current, null, 2); // Pretty-print for objects
+                finalOutput = JSON.stringify(current, null, 2);
             }
 
-            setOutput(finalOutput); // Set the output for the UI
+            setOutput(finalOutput);
         } catch (e: any) {
-            setOutput(`Error: ${e.message}`); // Handle errors gracefully
+            setOutput(`Error: ${e.message}`);
         }
     }, [input, inputType, steps]);
 
@@ -52,9 +49,8 @@ export function TransformationPipeline() {
     };
 
     const removeStep = (id: string) => {
-        // Only remove the last step in the array
         if (steps.length > 0 && steps[steps.length - 1].id === id) {
-            setSteps(steps.slice(0, steps.length - 1)); // Remove the last step
+            setSteps(steps.slice(0, steps.length - 1));
         }
     };
 
@@ -76,17 +72,17 @@ export function TransformationPipeline() {
         for (const step of steps) {
             const t = transformations[step.transformation];
             cur = t.fn(cur);
-            // REDETECT type instead of using t.outputType
             if (typeof cur === "string") {
                 lastType = detectType(cur);
             } else {
-                lastType = "json"; // assume structured objects are JSON
+                lastType = "json";
             }
         }
     } catch {}
 
     return (
-        <div style={{ padding: "16px", width: "100%" }}>
+        <div className="card full-width">
+            <div className="card-title">Data Transformer</div>
             <InputBox input={input} inputType={inputType} onChange={setInput} />
             <TransformationList
                 steps={steps}

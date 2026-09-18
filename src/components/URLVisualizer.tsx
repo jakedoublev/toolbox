@@ -1,4 +1,4 @@
-import { useState, useEffect, CSSProperties } from "react";
+import { useState, useEffect } from "react";
 import { CopyButton } from "./CopyButton";
 
 const parseParams = (paramString: string): Record<string, string> => {
@@ -20,63 +20,6 @@ const stringifyParams = (params: Record<string, string>): string => {
     return urlParams.toString();
 };
 
-const styles: Record<string, CSSProperties> = {
-    container: {
-        maxWidth: "600px",
-        margin: "2rem auto",
-        padding: "1rem",
-        border: "1px solid #ccc",
-        borderRadius: "6px",
-        fontFamily: "sans-serif",
-    },
-    inputGroup: {
-        marginBottom: "1rem",
-    },
-    input: {
-        width: "95%",
-        padding: "0.5rem",
-        marginTop: "0.25rem",
-        marginBottom: "0.5rem",
-        border: "1px solid #aaa",
-        borderRadius: "4px",
-    },
-    button: {
-        padding: "0.5rem 1rem",
-        fontWeight: "bold",
-        backgroundColor: "#007bff",
-        color: "white",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer",
-    },
-    buttonHover: {
-        backgroundColor: "#0056b3",
-    },
-    section: {
-        marginTop: "1rem",
-    },
-    paramItem: {
-        display: "flex",
-        alignItems: "center",
-        marginBottom: "0.5rem",
-    },
-    label: {
-        width: "100px",
-        fontFamily: "monospace",
-        fontWeight: "bold",
-    },
-    paramInput: {
-        flex: 1,
-        padding: "0.4rem",
-        border: "1px solid #aaa",
-        borderRadius: "4px",
-    },
-    empty: {
-        fontStyle: "italic",
-        color: "#777",
-    },
-};
-
 interface ParamsEditorProps {
     type: "query" | "hash";
     params: Record<string, string>;
@@ -89,60 +32,27 @@ interface ParamsEditorProps {
     setNewValue: (val: string) => void;
 }
 
-const ParamsEditor = ({
-    type,
-    params,
-    onChange,
-    onRemove,
-    onAdd,
-    newKey,
-    newValue,
-    setNewKey,
-    setNewValue,
-}: ParamsEditorProps) => (
-    <div style={styles.section}>
-        <strong>{type === "query" ? "Query" : "Hash"} Parameters:</strong>
+const ParamsEditor = ({ type, params, onChange, onRemove, onAdd, newKey, newValue, setNewKey, setNewValue }: ParamsEditorProps) => (
+    <div className="param-section">
+        <div className="param-section-title">{type === "query" ? "Query" : "Hash"} Parameters</div>
         {Object.keys(params).length === 0 ? (
-            <div style={styles.empty}>None</div>
+            <div className="empty-state">None</div>
         ) : (
             Object.entries(params).map(([key, value]) => (
-                <div key={key} style={styles.paramItem}>
-                    <label style={styles.label}>{key}</label>
-                    <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => onChange(key, e.target.value)}
-                        style={styles.paramInput}
-                    />
-                    <button
-                        onClick={() => onRemove(key)}
-                        style={{ ...styles.button, backgroundColor: "#eb3f59", marginLeft: "8px" }}
-                    >
-                        –
-                    </button>
+                <div key={key} className="param-row">
+                    <span className="param-key">{key}</span>
+                    <input type="text" value={value} onChange={(e) => onChange(key, e.target.value)} />
+                    <button onClick={() => onRemove(key)} className="btn btn-sm btn-danger">–</button>
                 </div>
             ))
         )}
-        <div style={styles.paramItem}>
-            <input placeholder="key" value={newKey} onChange={(e) => setNewKey(e.target.value)} style={styles.paramInput} />
-            <input
-                placeholder="value"
-                value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
-                style={{ ...styles.paramInput, marginLeft: "8px" }}
-            />
+        <div className="param-row">
+            <input type="text" placeholder="key" value={newKey} onChange={(e) => setNewKey(e.target.value)} />
+            <input type="text" placeholder="value" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
             <button
-                onClick={() => {
-                    if (newKey.trim()) {
-                        onAdd(newKey, newValue);
-                        setNewKey("");
-                        setNewValue("");
-                    }
-                }}
-                style={{ ...styles.button, marginLeft: "8px" }}
-            >
-                +
-            </button>
+                onClick={() => { if (newKey.trim()) { onAdd(newKey, newValue); setNewKey(""); setNewValue(""); } }}
+                className="btn btn-sm btn-primary"
+            >+</button>
         </div>
     </div>
 );
@@ -180,79 +90,32 @@ const URLVisualizer = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.inputGroup}>
-                <label htmlFor="url-input">URL Input</label>
-                <input
-                    id="url-input"
-                    type="text"
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    style={styles.input}
-                />
+        <div className="card">
+            <div className="card-title">URL Inspector</div>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "start" }}>
+                <input id="url-input" type="text" value={urlInput} onChange={(e) => setUrlInput(e.target.value)} placeholder="Paste a URL..." />
                 {urlInput !== "" && <CopyButton content={urlInput} />}
             </div>
-
             {urlObject && (
-                <div>
-                    <div>
-                        <strong>Origin:</strong> {urlObject.origin}
+                <div style={{ marginTop: "0.75rem" }}>
+                    <div className="url-parts">
+                        <div><strong>Origin</strong> <span>{urlObject.origin}</span></div>
+                        <div><strong>Host</strong> <span>{urlObject.host}</span></div>
+                        <div><strong>Path</strong> <span>{urlObject.pathname}</span></div>
                     </div>
-                    <div>
-                        <strong>Host:</strong> {urlObject.host}
-                    </div>
-                    <div>
-                        <strong>Path:</strong> {urlObject.pathname}
-                    </div>
-
                     <ParamsEditor
-                        type="query"
-                        params={queryParams}
-                        onChange={(key, value) => {
-                            const updated = { ...queryParams, [key]: value };
-                            setQueryParams(updated);
-                            updateUrlInput(updated, hashParams);
-                        }}
-                        onRemove={(key) => {
-                            const updated = { ...queryParams };
-                            delete updated[key];
-                            setQueryParams(updated);
-                            updateUrlInput(updated, hashParams);
-                        }}
-                        onAdd={(key, value) => {
-                            const updated = { ...queryParams, [key]: value };
-                            setQueryParams(updated);
-                            updateUrlInput(updated, hashParams);
-                        }}
-                        newKey={newQueryKey}
-                        newValue={newQueryValue}
-                        setNewKey={setNewQueryKey}
-                        setNewValue={setNewQueryValue}
+                        type="query" params={queryParams}
+                        onChange={(key, value) => { const updated = { ...queryParams, [key]: value }; setQueryParams(updated); updateUrlInput(updated, hashParams); }}
+                        onRemove={(key) => { const updated = { ...queryParams }; delete updated[key]; setQueryParams(updated); updateUrlInput(updated, hashParams); }}
+                        onAdd={(key, value) => { const updated = { ...queryParams, [key]: value }; setQueryParams(updated); updateUrlInput(updated, hashParams); }}
+                        newKey={newQueryKey} newValue={newQueryValue} setNewKey={setNewQueryKey} setNewValue={setNewQueryValue}
                     />
-
                     <ParamsEditor
-                        type="hash"
-                        params={hashParams}
-                        onChange={(key, value) => {
-                            const updated = { ...hashParams, [key]: value };
-                            setHashParams(updated);
-                            updateUrlInput(queryParams, updated);
-                        }}
-                        onRemove={(key) => {
-                            const updated = { ...hashParams };
-                            delete updated[key];
-                            setHashParams(updated);
-                            updateUrlInput(queryParams, updated);
-                        }}
-                        onAdd={(key, value) => {
-                            const updated = { ...hashParams, [key]: value };
-                            setHashParams(updated);
-                            updateUrlInput(queryParams, updated);
-                        }}
-                        newKey={newHashKey}
-                        newValue={newHashValue}
-                        setNewKey={setNewHashKey}
-                        setNewValue={setNewHashValue}
+                        type="hash" params={hashParams}
+                        onChange={(key, value) => { const updated = { ...hashParams, [key]: value }; setHashParams(updated); updateUrlInput(queryParams, updated); }}
+                        onRemove={(key) => { const updated = { ...hashParams }; delete updated[key]; setHashParams(updated); updateUrlInput(queryParams, updated); }}
+                        onAdd={(key, value) => { const updated = { ...hashParams, [key]: value }; setHashParams(updated); updateUrlInput(queryParams, updated); }}
+                        newKey={newHashKey} newValue={newHashValue} setNewKey={setNewHashKey} setNewValue={setNewHashValue}
                     />
                 </div>
             )}

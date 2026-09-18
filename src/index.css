@@ -1,0 +1,365 @@
+/* ── Design Tokens ── */
+:root {
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-surface-hover: #222632;
+  --color-border: #2a2e3a;
+  --color-border-focus: #4a6cf7;
+  --color-text: #e4e7ef;
+  --color-text-muted: #8b92a8;
+  --color-text-dim: #5c6378;
+  --color-primary: #4a6cf7;
+  --color-primary-hover: #3b5de8;
+  --color-success: #34c759;
+  --color-success-hover: #2db34d;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-input-bg: #12141c;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font-mono: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Reset & Base ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.app-header p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.app-grid .card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-success {
+  background: var(--color-success);
+  color: #fff;
+}
+.btn-success:hover {
+  background: var(--color-success-hover);
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: var(--color-danger-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+.btn-ghost:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+/* ── Inputs ── */
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-border-focus);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+select {
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+/* ── Pre / Code display ── */
+.code-display {
+  padding: 0.625rem 0.75rem;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  word-break: break-all;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ── Label ── */
+label,
+.field-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 0.375rem;
+}
+
+/* ── Toggle ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+
+.toggle-track {
+  position: relative;
+  display: inline-flex;
+  height: 22px;
+  width: 40px;
+  align-items: center;
+  border-radius: 100px;
+  transition: background-color 0.2s ease;
+  outline: none;
+  cursor: pointer;
+  border: none;
+}
+
+.toggle-thumb {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  border-radius: 100px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.toggle-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Button row ── */
+.btn-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── Step list ── */
+.step-list {
+  list-style: none;
+  padding: 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.625rem;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.step-item span {
+  flex: 1;
+  color: var(--color-text);
+}
+
+/* ── Param editor rows ── */
+.param-section {
+  margin-top: 0.75rem;
+}
+
+.param-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.375rem;
+}
+
+.param-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+}
+
+.param-row input {
+  flex: 1;
+}
+
+.param-key {
+  width: 100px;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.empty-state {
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--color-text-dim);
+  padding: 0.25rem 0;
+}
+
+/* ── URL parts ── */
+.url-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.url-parts div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.url-parts strong {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  min-width: 55px;
+}
+
+.url-parts span {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+/* ── Output area ── */
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.375rem;
+}
+
+.output-header h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .app-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -18,42 +18,35 @@ export const TransformationList: React.FC<TransformationListProps> = ({
     getValidTransformations,
     currentType,
 }) => (
-    <div style={{ marginTop: "16px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold" }}>Transformation Steps</h2>
-        {steps.length > 0 && <button onClick={clearSteps}>Clear All Steps</button>}
-        <ul style={{ listStyle: "none", padding: 0 }}>
+    <div style={{ marginTop: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+            <label style={{ margin: 0 }}>Steps</label>
+            {steps.length > 0 && (
+                <button onClick={clearSteps} className="btn btn-sm btn-ghost">Clear All</button>
+            )}
+        </div>
+        <ul className="step-list">
             {steps.map((step, i) => (
-                <li key={step.id} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-                    <span style={{ flexGrow: 1 }}>{transformations[step.transformation].label}</span>
+                <li key={step.id} className="step-item">
+                    <span>{transformations[step.transformation].label}</span>
                     {i === steps.length - 1 && (
-                        <button
-                            onClick={() => removeStep(step.id)}
-                            style={{
-                                padding: "4px 8px",
-                                backgroundColor: "#e74c3c",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "4px",
-                            }}
-                        >
+                        <button onClick={() => removeStep(step.id)} className="btn btn-sm btn-danger">
                             Remove
                         </button>
                     )}
                 </li>
             ))}
         </ul>
-        <div style={{ marginTop: "8px" }}>
-            <select
-                onChange={(e) => e.target.value && addStep(e.target.value as keyof typeof transformations)}
-                style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
-            >
-                <option value="">Add Transformation</option>
-                {getValidTransformations(currentType).map((t) => (
-                    <option key={t.key} value={t.key}>
-                        {t.label}
-                    </option>
-                ))}
-            </select>
-        </div>
+        <select
+            onChange={(e) => e.target.value && addStep(e.target.value as keyof typeof transformations)}
+            value=""
+        >
+            <option value="">Add transformation...</option>
+            {getValidTransformations(currentType).map((t) => (
+                <option key={t.key} value={t.key}>
+                    {t.label}
+                </option>
+            ))}
+        </select>
     </div>
 );
